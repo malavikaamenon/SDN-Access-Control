@@ -1,5 +1,3 @@
-"""
-
 
 from pox.core import core
 from pox.lib.util import dpid_to_str
@@ -11,11 +9,7 @@ import logging
 
 log = core.getLogger()
 
-# ─────────────────────────────────────────────
-#  WHITELIST CONFIGURATION
-#  Only these MAC addresses are authorized.
-#  h4 and h5 are intentionally absent → blocked.
-# ─────────────────────────────────────────────
+
 WHITELIST = {
     EthAddr('00:00:00:00:00:01'),   # h1 - Authorized
     EthAddr('00:00:00:00:00:02'),   # h2 - Authorized
@@ -25,14 +19,14 @@ WHITELIST = {
 }
 
 # Flow rule priorities
-PRIORITY_DENY       = 100   # Evaluated first — blocks unauthorized
-PRIORITY_ALLOW      = 10    # Evaluated second — forwards authorized
-PRIORITY_TABLE_MISS = 0     # Default — send to controller
+PRIORITY_DENY       = 100   
+PRIORITY_ALLOW      = 10   
+PRIORITY_TABLE_MISS = 0    
 
 # Timeouts
-ALLOW_IDLE_TIMEOUT = 30   # Remove allow rule after 30s idle
-ALLOW_HARD_TIMEOUT = 0    # Never force-remove allow rules
-DENY_IDLE_TIMEOUT  = 0    # Keep deny rules forever
+ALLOW_IDLE_TIMEOUT = 30   
+ALLOW_HARD_TIMEOUT = 0    
+DENY_IDLE_TIMEOUT  = 0    
 DENY_HARD_TIMEOUT  = 0
 
 
@@ -66,10 +60,7 @@ class AccessControlSwitch(object):
         log.info("Whitelist: %s", [str(m) for m in WHITELIST])
 
     def _install_table_miss(self):
-        """
-        Installs the default table-miss flow entry.
-        Any packet that matches no other rule gets sent to the controller.
-        """
+       
         msg = of.ofp_flow_mod()
         msg.priority = PRIORITY_TABLE_MISS
         msg.match = of.ofp_match()   # Match everything
@@ -80,16 +71,7 @@ class AccessControlSwitch(object):
 
     def _add_flow(self, match, actions, priority,
                   idle_timeout=0, hard_timeout=0):
-        """
-        Sends an ofp_flow_mod to install a flow rule on the switch.
-
-        Args:
-            match:        ofp_match object — which packets to match
-            actions:      list of actions (empty = DROP)
-            priority:     rule priority (higher = checked first)
-            idle_timeout: remove after N seconds of inactivity
-            hard_timeout: remove after N seconds regardless
-        """
+        
         msg = of.ofp_flow_mod()
         msg.match        = match
         msg.priority     = priority
@@ -99,10 +81,7 @@ class AccessControlSwitch(object):
         self.connection.send(msg)
 
     def _packet_out(self, event, out_port):
-        """
-        Sends the current packet out the specified port immediately.
-        Used before the flow rule takes effect for the first packet.
-        """
+        
         msg = of.ofp_packet_out()
         msg.data        = event.ofp
         msg.in_port     = event.port
@@ -110,7 +89,7 @@ class AccessControlSwitch(object):
         self.connection.send(msg)
 
     def _drop_packet(self, event):
-        """Drops the current packet (no packet_out, no flood)."""
+      
         msg = of.ofp_packet_out()
         msg.data    = event.ofp
         msg.in_port = event.port
@@ -118,12 +97,7 @@ class AccessControlSwitch(object):
         self.connection.send(msg)
 
     def _handle_PacketIn(self, event):
-        """
-        Core packet_in handler — called for every packet the switch
-        cannot match against existing flow rules.
-
-        This is where the access control policy is enforced.
-        """
+      
         packet  = event.parsed
         in_port = event.port
 
@@ -218,10 +192,7 @@ class AccessControlSwitch(object):
 
 
 class AccessControlController(EventMixin):
-    """
-    Main POX component. Listens for new switch connections
-    and creates an AccessControlSwitch for each one.
-    """
+   
 
     def __init__(self):
         self._listen_to_connects()
@@ -243,8 +214,5 @@ class AccessControlController(EventMixin):
 
 
 def launch():
-    """
-    POX entry point. Called by pox.py when this module is loaded.
-    Usage: python3 pox.py misc.access_control_controller
-    """
+    
     core.registerNew(AccessControlController)
