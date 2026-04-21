@@ -1,24 +1,5 @@
 #!/usr/bin/env python3
-"""
-SDN Access Control — Test Suite
-=================================
-Regression and functional tests that can be run against a live
-Mininet topology. Connects to the Mininet network and exercises
-both the allowed and denied access scenarios.
 
-Test Scenarios:
-  1. Authorized host-to-host communication (should succeed)
-  2. Unauthorized host attempts (should be blocked)
-  3. iperf throughput between authorized hosts
-  4. Flow table verification via ovs-ofctl
-  5. Regression: Policy consistency after rule timeout/reinstall
-
-Usage (run in a separate terminal while topology is running):
-    sudo python3 tests/run_tests.py
-
-Or run topology + tests together:
-    sudo python3 topology/access_control_topo.py --test
-"""
 
 import subprocess
 import sys
