@@ -1,39 +1,5 @@
 #!/usr/bin/env python3
-"""
-Mininet Topology for SDN Access Control System
-================================================
-Creates a star topology with one OpenFlow switch and 5 hosts:
-  - h1, h2, h3 → AUTHORIZED (in whitelist)
-  - h4         → UNAUTHORIZED (not in whitelist)
-  - h5         → UNAUTHORIZED (not in whitelist)
 
-Topology Diagram:
-                    ┌──────────────────────┐
-                    │    Ryu Controller    │
-                    │  (OpenFlow 1.3)      │
-                    │  127.0.0.1:6633      │
-                    └──────────┬───────────┘
-                               │ OpenFlow
-                    ┌──────────▼───────────┐
-                    │      Switch s1       │
-                    │   (OVS OpenFlow13)   │
-                    └──┬──┬──┬──┬──┬───────┘
-                       │  │  │  │  │
-                  ┌────┘  │  │  │  └────┐
-                  │   ┌───┘  │  └───┐   │
-                 h1  h2     h3     h4  h5
-               (auth)(auth)(auth)(unauth)(unauth)
-
-IP Assignments:
-  h1: 10.0.0.1/24  MAC: 00:00:00:00:00:01
-  h2: 10.0.0.2/24  MAC: 00:00:00:00:00:02
-  h3: 10.0.0.3/24  MAC: 00:00:00:00:00:03
-  h4: 10.0.0.4/24  MAC: 00:00:00:00:00:04  ← BLOCKED
-  h5: 10.0.0.5/24  MAC: 00:00:00:00:00:05  ← BLOCKED
-
-Usage:
-    sudo python3 topology/access_control_topo.py
-"""
 
 from mininet.net import Mininet
 from mininet.node import RemoteController, OVSSwitch
@@ -45,9 +11,7 @@ import sys
 
 
 def create_topology():
-    """
-    Builds and returns the Mininet network with the access control topology.
-    """
+    
     info("=" * 60 + "\n")
     info("  SDN Access Control Topology\n")
     info("  Controller: 127.0.0.1:6633\n")
